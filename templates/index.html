@@ -1,10 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <title>CCTV Stream</title>
+    <meta charset="UTF-8">
+    <title>CCTV 영상</title>
   </head>
   <body>
-    <h1>CCTV Stream</h1>
-    <img src="{{ url_for('video_feed') }}" width="640" height="480">
+    <h1>CCTV 영상</h1>
+    <video src="{{ url_for('video_feed') }}" width="640" height="480" autoplay></video>
   </body>
 </html>
