@@ -1,30 +1,19 @@
-
-from flask import Flask, render_template, Response
 import cv2
+from PyLivestream import PyLivestream
 
-app = Flask(__name__)
+print(cv2.__version__)
 
-camera = cv2.VideoCapture("rtmp://210.99.70.120/live/cctv045.stream")
 
-def gen_frames():
-    while True:
-        success, frame = camera.read()
-        if not success:
-            break
-        else:
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+rtmp_url = "rtmp://210.99.70.120/live/cctv045.stream"
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+stream = PyLivestream()
+stream.open(rtmp_url)
 
-@app.route('/video_feed')
-def video_feed():
-    return Response(gen_frames(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+while True:
+    frame = stream.get_frame()
+    cv2.imshow('frame', frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
-if __name__ == '__main__':
-    app.run(debug=True)
+stream.close()
+cv2.destroyAllWindows()
